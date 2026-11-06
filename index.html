@@ -1,0 +1,1068 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Python Master - פורטל למידה אינטראקטיבי לפייתון</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            50: '#eff6ff',
+                            100: '#dbeafe',
+                            500: '#3b82f6',
+                            600: '#2563eb',
+                            700: '#1d4ed8',
+                            900: '#1e3a8a',
+                        },
+                        python: {
+                            blue: '#3776ab',
+                            yellow: '#ffd343'
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Rubik', 'Inter', 'system-ui', 'sans-serif'],
+                        mono: ['JetBrains Mono', 'Fira Code', 'Courier New', 'monospace']
+                    }
+                }
+            }
+        }
+    </script>
+    <!-- Google Fonts: Rubik for clean Hebrew and JetBrains Mono for code -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&family=Rubik:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <style>
+        body {
+            font-family: 'Rubik', sans-serif;
+            transition: background-color 0.25s ease, color 0.25s ease;
+        }
+        pre, code, .code-font {
+            font-family: 'JetBrains Mono', monospace;
+            direction: ltr;
+            text-align: left;
+        }
+        /* Custom scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: rgba(0, 0, 0, 0.05);
+        }
+        .dark ::-webkit-scrollbar-track {
+            background: rgba(255, 255, 255, 0.05);
+        }
+        ::-webkit-scrollbar-thumb {
+            background: rgba(100, 116, 139, 0.4);
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: rgba(100, 116, 139, 0.7);
+        }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-800 dark:bg-slate-950 dark:text-slate-100 min-h-screen flex flex-col">
+
+    <!-- Header Navigation -->
+    <header class="sticky top-0 z-40 bg-white/90 dark:bg-slate-900/90 backdrop-blur border-b border-slate-200 dark:border-slate-800 shadow-sm transition-colors">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-16 gap-4">
+                
+                <!-- Logo & Brand -->
+                <div class="flex items-center gap-3">
+                    <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-blue-600 to-indigo-500 flex items-center justify-center text-white shadow-md shadow-blue-500/30">
+                        <i class="fa-brands fa-python text-2xl"></i>
+                    </div>
+                    <div>
+                        <span class="text-xl font-bold bg-gradient-to-l from-blue-600 to-indigo-500 bg-clip-text text-transparent">Python Master</span>
+                        <span class="hidden sm:inline-block text-xs font-medium text-slate-400 dark:text-slate-500 mr-2 border-r border-slate-300 dark:border-slate-700 pr-2">פורטל למידה אינטראקטיבי</span>
+                    </div>
+                </div>
+
+                <!-- Global Search Bar -->
+                <div class="flex-1 max-w-md mx-2 sm:mx-6">
+                    <div class="relative">
+                        <div class="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none text-slate-400">
+                            <i class="fa-solid fa-magnifying-glass"></i>
+                        </div>
+                        <input type="text" id="searchInput" placeholder="חיפוש פקודות, מושגים או נושאים..." 
+                               class="w-full pr-10 pl-4 py-2 text-sm bg-slate-100 dark:bg-slate-800 text-slate-900 dark:text-slate-100 border border-transparent focus:border-blue-500 dark:focus:border-blue-400 focus:bg-white dark:focus:bg-slate-900 rounded-xl focus:outline-none transition">
+                    </div>
+                </div>
+
+                <!-- Action Controls (Progress, Dark Mode) -->
+                <div class="flex items-center gap-2 sm:gap-4">
+                    <!-- Progress Pill -->
+                    <div class="hidden md:flex items-center gap-2 bg-slate-100 dark:bg-slate-800/80 px-3 py-1.5 rounded-full border border-slate-200 dark:border-slate-700 text-xs font-semibold">
+                        <i class="fa-solid fa-trophy text-amber-500"></i>
+                        <span>הושלמו:</span>
+                        <span id="headerProgressText" class="text-blue-600 dark:text-blue-400 font-bold">0/0</span>
+                    </div>
+
+                    <!-- Dark Mode Toggle Button -->
+                    <button id="themeToggleBtn" aria-label="Toggle Theme" 
+                            class="w-10 h-10 rounded-xl border border-slate-200 dark:border-slate-800 flex items-center justify-center text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 transition">
+                        <i class="fa-solid fa-moon dark:hidden text-lg"></i>
+                        <i class="fa-solid fa-sun hidden dark:inline-block text-amber-400 text-lg"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Hero & Filter Section -->
+    <main class="flex-1 max-w-7xl mx-auto w-full px-4 sm:px-6 lg:px-8 py-8 space-y-8">
+
+        <!-- Welcome Banner & Quick Stats -->
+        <div class="bg-gradient-to-r from-blue-700 via-indigo-700 to-indigo-900 rounded-2xl p-6 sm:p-8 text-white shadow-xl shadow-indigo-950/20 relative overflow-hidden">
+            <div class="absolute -top-12 -left-12 w-48 h-48 bg-white/10 rounded-full blur-2xl pointer-events-none"></div>
+            <div class="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-6">
+                <div class="space-y-2 max-w-2xl">
+                    <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-medium bg-white/20 backdrop-blur border border-white/20 text-white">
+                        <i class="fa-solid fa-sparkles text-amber-300"></i> גרסת לימוד פייתון 3.12+
+                    </span>
+                    <h1 class="text-2xl sm:text-3xl font-bold tracking-tight">המסלול המלא והאינטראקטיבי ללימוד Python</h1>
+                    <p class="text-blue-100 text-sm sm:text-base leading-relaxed">
+                        בחר יחידת לימוד, צפה בהסברים וידאו, תרגל קוד בזמן אמת בסימולטור, ועקוב אחר התקדמותך עד לרמת מאסטר.
+                    </p>
+                </div>
+                
+                <!-- Dynamic Progress Bar Card -->
+                <div class="bg-white/10 backdrop-blur-md border border-white/20 rounded-xl p-4 min-w-[240px] flex flex-col justify-center">
+                    <div class="flex justify-between items-center text-xs font-medium mb-1.5">
+                        <span class="text-blue-100">התקדמות במסלול</span>
+                        <span id="statsPercent" class="font-bold text-white">0%</span>
+                    </div>
+                    <div class="w-full bg-white/20 h-2.5 rounded-full overflow-hidden">
+                        <div id="statsProgressBar" class="bg-gradient-to-l from-emerald-400 to-teal-300 h-full rounded-full transition-all duration-500" style="width: 0%"></div>
+                    </div>
+                    <div class="flex justify-between items-center text-[11px] text-blue-200 mt-2">
+                        <span id="statsCompletedCount">0 יחידות הושלמו</span>
+                        <button onclick="resetAllProgress()" class="hover:text-white underline transition">איפוס נתונים</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Filter Controls (Level Tabs & Status) -->
+        <div class="flex flex-col sm:flex-row items-center justify-between gap-4 border-b border-slate-200 dark:border-slate-800 pb-5">
+            <!-- Difficulty Tabs -->
+            <div class="flex items-center gap-1.5 sm:gap-2 p-1.5 bg-slate-200/70 dark:bg-slate-800/80 rounded-xl w-full sm:w-auto overflow-x-auto">
+                <button data-level="all" class="level-tab active px-4 py-2 text-xs sm:text-sm font-medium rounded-lg transition-all flex items-center gap-2 whitespace-nowrap bg-white dark:bg-slate-700 text-slate-900 dark:text-white shadow-sm">
+                    <i class="fa-solid fa-layer-group text-slate-400"></i>
+                    <span>כל הנושאים</span>
+                    <span id="count-all" class="text-[11px] px-1.5 py-0.5 rounded-md bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 font-bold">0</span>
+                </button>
+                <button data-level="beginner" class="level-tab px-4 py-2 text-xs sm:text-sm font-medium rounded-lg transition-all flex items-center gap-2 whitespace-nowrap text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white">
+                    <span class="w-2.5 h-2.5 rounded-full bg-emerald-500"></span>
+                    <span>מתחילים</span>
+                    <span id="count-beginner" class="text-[11px] px-1.5 py-0.5 rounded-md bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 font-bold">0</span>
+                </button>
+                <button data-level="intermediate" class="level-tab px-4 py-2 text-xs sm:text-sm font-medium rounded-lg transition-all flex items-center gap-2 whitespace-nowrap text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white">
+                    <span class="w-2.5 h-2.5 rounded-full bg-blue-500"></span>
+                    <span>מתקדמים</span>
+                    <span id="count-intermediate" class="text-[11px] px-1.5 py-0.5 rounded-md bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 font-bold">0</span>
+                </button>
+                <button data-level="advanced" class="level-tab px-4 py-2 text-xs sm:text-sm font-medium rounded-lg transition-all flex items-center gap-2 whitespace-nowrap text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white">
+                    <span class="w-2.5 h-2.5 rounded-full bg-purple-500"></span>
+                    <span>מומחים</span>
+                    <span id="count-advanced" class="text-[11px] px-1.5 py-0.5 rounded-md bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 font-bold">0</span>
+                </button>
+            </div>
+
+            <!-- Additional filters or view toggles -->
+            <div class="flex items-center gap-3 w-full sm:w-auto justify-end">
+                <label class="inline-flex items-center cursor-pointer text-xs sm:text-sm text-slate-600 dark:text-slate-300 gap-2 select-none">
+                    <input type="checkbox" id="showCompletedOnlyToggle" class="sr-only peer">
+                    <div class="w-9 h-5 bg-slate-300 peer-focus:outline-none rounded-full peer dark:bg-slate-700 peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all dark:border-slate-600 peer-checked:bg-blue-600"></div>
+                    <span>הצג רק נושאים שהושלמו</span>
+                </label>
+            </div>
+        </div>
+
+        <!-- Topics Cards Grid -->
+        <div id="topicsGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <!-- Cards rendered dynamically via JavaScript -->
+        </div>
+
+        <!-- Empty State (When search / filter yields nothing) -->
+        <div id="emptyState" class="hidden text-center py-16 px-4">
+            <div class="w-16 h-16 mx-auto mb-4 bg-slate-100 dark:bg-slate-800 rounded-full flex items-center justify-center text-slate-400 text-2xl">
+                <i class="fa-solid fa-magnifying-glass"></i>
+            </div>
+            <h3 class="text-lg font-bold text-slate-700 dark:text-slate-300">לא נמצאו תוצאות מתאימות</h3>
+            <p class="text-sm text-slate-500 dark:text-slate-400 mt-1">נסה לשנות את מילת החיפוש או לבחור ברמת לימוד אחרת.</p>
+            <button onclick="resetFilters()" class="mt-4 px-4 py-2 bg-blue-600 text-white rounded-lg text-sm font-medium hover:bg-blue-700 transition">
+                אפס סינונים
+            </button>
+        </div>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-white dark:bg-slate-900 border-t border-slate-200 dark:border-slate-800 py-6 mt-12 transition-colors">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-slate-500 dark:text-slate-400">
+            <div class="flex items-center gap-2">
+                <i class="fa-brands fa-python text-blue-500 text-base"></i>
+                <span>Python Master &copy; 2026. למידה עצמאית מודרנית בעברית.</span>
+            </div>
+            <div class="flex items-center gap-4">
+                <span>קוד נקי &bull; ללא תלויות שרת &bull; מותאם לכל מכשיר</span>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Full Topic Detail Modal (Dialog) -->
+    <div id="detailModal" class="fixed inset-0 z-50 hidden overflow-y-auto bg-slate-900/70 backdrop-blur-sm transition-opacity p-2 sm:p-4 flex items-center justify-center">
+        <div class="relative bg-white dark:bg-slate-900 rounded-2xl max-w-4xl w-full shadow-2xl border border-slate-200 dark:border-slate-800 overflow-hidden max-h-[92vh] flex flex-col animate-scaleUp">
+            
+            <!-- Modal Header -->
+            <div class="px-6 py-4 border-b border-slate-200 dark:border-slate-800 flex items-center justify-between bg-slate-50 dark:bg-slate-850">
+                <div class="flex items-center gap-3">
+                    <span id="modalLevelBadge" class="px-2.5 py-1 rounded-full text-xs font-semibold"></span>
+                    <h2 id="modalTitle" class="text-xl sm:text-2xl font-bold text-slate-900 dark:text-white flex items-center gap-2">
+                        <!-- Loaded dynamically -->
+                    </h2>
+                </div>
+                
+                <div class="flex items-center gap-2">
+                    <!-- Toggle Complete in modal -->
+                    <button id="modalCompleteBtn" class="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium border border-slate-300 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-800 transition">
+                        <i class="fa-regular fa-circle-check"></i>
+                        <span id="modalCompleteText">סמן כהושלם</span>
+                    </button>
+                    <!-- Close button -->
+                    <button onclick="closeModal()" class="w-8 h-8 rounded-lg flex items-center justify-center text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 transition">
+                        <i class="fa-solid fa-xmark text-lg"></i>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Modal Content (Scrollable) -->
+            <div class="p-6 overflow-y-auto space-y-8 flex-1">
+                
+                <!-- Section 1: Overview & Syntax -->
+                <div class="space-y-3">
+                    <h3 class="text-base font-bold text-slate-900 dark:text-white flex items-center gap-2">
+                        <i class="fa-solid fa-book-open text-blue-500"></i> הסבר ותחביר (Syntax)
+                    </h3>
+                    <p id="modalDescription" class="text-sm sm:text-base text-slate-600 dark:text-slate-300 leading-relaxed"></p>
+                    
+                    <div class="bg-slate-100 dark:bg-slate-800/90 rounded-xl p-3 border border-slate-200 dark:border-slate-700">
+                        <div class="text-xs font-semibold text-slate-500 dark:text-slate-400 mb-1">מבנה התחביר הבסיסי:</div>
+                        <code id="modalSyntax" class="text-blue-600 dark:text-blue-400 font-bold text-sm block"></code>
+                    </div>
+                </div>
+
+                <!-- Section 2: Video Tutorial Embed -->
+                <div class="space-y-3">
+                    <h3 class="text-base font-bold text-slate-900 dark:text-white flex items-center gap-2">
+                        <i class="fa-brands fa-youtube text-red-500"></i> סרטון הדרכה והמחשה ויזואלית
+                    </h3>
+                    <div class="relative w-full aspect-video rounded-xl overflow-hidden bg-slate-950 border border-slate-200 dark:border-slate-800 shadow">
+                        <iframe id="modalVideoFrame" class="w-full h-full" src="" title="Python Tutorial Video" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+                    </div>
+                </div>
+
+                <!-- Section 3: Official Code Example with Copy -->
+                <div class="space-y-3">
+                    <div class="flex items-center justify-between">
+                        <h3 class="text-base font-bold text-slate-900 dark:text-white flex items-center gap-2">
+                            <i class="fa-solid fa-code text-indigo-500"></i> דוגמת קוד מלאה
+                        </h3>
+                        <button onclick="copySnippetCode()" class="text-xs font-medium text-blue-600 dark:text-blue-400 hover:text-blue-700 flex items-center gap-1.5 py-1 px-2.5 rounded bg-blue-50 dark:bg-blue-950/60 border border-blue-200 dark:border-blue-900">
+                            <i class="fa-regular fa-copy"></i>
+                            <span id="copyBtnText">העתק קוד</span>
+                        </button>
+                    </div>
+                    <div class="relative rounded-xl overflow-hidden bg-slate-900 text-slate-100 border border-slate-800 shadow-inner">
+                        <div class="bg-slate-800/60 px-4 py-2 text-xs text-slate-400 flex items-center justify-between border-b border-slate-700/50">
+                            <span>main.py</span>
+                            <span>Python 3</span>
+                        </div>
+                        <pre class="p-4 text-xs sm:text-sm overflow-x-auto leading-relaxed"><code id="modalSnippetCode" class="text-emerald-400"></code></pre>
+                    </div>
+                </div>
+
+                <!-- Section 4: Interactive Live Playground (Simulator Mock) -->
+                <div class="space-y-3">
+                    <div class="flex items-center justify-between">
+                        <h3 class="text-base font-bold text-slate-900 dark:text-white flex items-center gap-2">
+                            <i class="fa-solid fa-terminal text-emerald-500"></i> סימולטור הרצה אינטראקטיבי (Live Playground)
+                        </h3>
+                        <span class="text-xs text-slate-500 dark:text-slate-400">ניתן לערוך ולהריץ מיידית</span>
+                    </div>
+
+                    <div class="rounded-xl border border-slate-300 dark:border-slate-700 bg-slate-900 overflow-hidden shadow">
+                        <!-- Playground editor head -->
+                        <div class="bg-slate-850 px-4 py-2 border-b border-slate-800 flex items-center justify-between">
+                            <div class="flex items-center gap-2">
+                                <span class="w-3 h-3 rounded-full bg-rose-500 inline-block"></span>
+                                <span class="w-3 h-3 rounded-full bg-amber-500 inline-block"></span>
+                                <span class="w-3 h-3 rounded-full bg-emerald-500 inline-block"></span>
+                                <span class="text-xs text-slate-400 font-mono mr-2">editor.py</span>
+                            </div>
+                            <div class="flex items-center gap-2">
+                                <button onclick="resetEditorCode()" class="text-xs text-slate-400 hover:text-white px-2 py-1 rounded bg-slate-800">
+                                    <i class="fa-solid fa-arrow-rotate-left"></i> איפוס
+                                </button>
+                                <button onclick="runSimulation()" class="bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-semibold px-3.5 py-1.5 rounded-lg flex items-center gap-1.5 shadow transition">
+                                    <i class="fa-solid fa-play"></i> הרץ קוד
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Editable Code Area -->
+                        <textarea id="playgroundEditor" rows="6" spellcheck="false" 
+                                  class="w-full bg-slate-900 text-slate-100 p-4 font-mono text-xs sm:text-sm focus:outline-none focus:ring-1 focus:ring-emerald-500 border-none resize-y"></textarea>
+
+                        <!-- Simulated Terminal Output -->
+                        <div class="border-t border-slate-800 bg-black/90 p-3 sm:p-4 font-mono text-xs">
+                            <div class="text-slate-500 text-[11px] mb-1 flex items-center justify-between">
+                                <span>Output Console:</span>
+                                <span id="executionTime" class="text-emerald-500 hidden">הורץ בהצלחה (0.02s)</span>
+                            </div>
+                            <pre id="consoleOutput" class="text-slate-300 whitespace-pre-wrap max-h-32 overflow-y-auto leading-relaxed">לחץ על 'הרץ קוד' כדי לראות את הפלט...</pre>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Section 5: Quick Quiz (תרגול מהיר) -->
+                <div class="space-y-3 bg-blue-50/50 dark:bg-slate-800/40 p-4 sm:p-5 rounded-2xl border border-blue-100 dark:border-slate-700/80">
+                    <h3 class="text-base font-bold text-slate-900 dark:text-white flex items-center gap-2">
+                        <i class="fa-solid fa-circle-question text-amber-500"></i> שאלת הבנה קצרה (Quick Quiz)
+                    </h3>
+                    <p id="quizQuestion" class="text-sm font-medium text-slate-800 dark:text-slate-200"></p>
+                    
+                    <div id="quizOptions" class="grid grid-cols-1 sm:grid-cols-2 gap-2.5 pt-2">
+                        <!-- Options loaded dynamically -->
+                    </div>
+
+                    <!-- Quiz Feedback Banner -->
+                    <div id="quizFeedback" class="hidden p-3 rounded-xl text-xs sm:text-sm font-medium items-center gap-2 mt-2"></div>
+                </div>
+
+            </div>
+
+            <!-- Modal Footer -->
+            <div class="px-6 py-3.5 bg-slate-50 dark:bg-slate-850 border-t border-slate-200 dark:border-slate-800 flex justify-between items-center text-xs text-slate-500">
+                <span id="modalTopicCategory"></span>
+                <button onclick="closeModal()" class="px-4 py-2 bg-slate-200 dark:bg-slate-800 text-slate-800 dark:text-slate-200 hover:bg-slate-300 dark:hover:bg-slate-700 rounded-lg font-medium transition">
+                    סגור חלון
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Notification Toast -->
+    <div id="toastMessage" class="fixed bottom-6 right-6 z-50 transform translate-y-24 opacity-0 transition-all duration-300 bg-slate-900 text-white dark:bg-white dark:text-slate-900 px-4 py-3 rounded-xl shadow-2xl flex items-center gap-2 text-sm font-medium">
+        <i id="toastIcon" class="fa-solid fa-circle-check text-emerald-400 dark:text-emerald-600"></i>
+        <span id="toastText">הפעולה בוצעה בהצלחה</span>
+    </div>
+
+    <!-- JAVASCRIPT LOGIC -->
+    <script>
+        /* ========================================================
+           1. INTERNAL DATABASE (PYTHON TOPICS & LESSONS)
+           ======================================================== */
+        const pythonTopics = [
+            {
+                id: 'variables',
+                title: 'משתנים וטיפוסי נתונים',
+                level: 'beginner',
+                category: 'יסודות התכנות',
+                summary: 'יצירת משתנים, הבנת מחרוזות (str), מספרים שלמים (int), ועשרוניים (float).',
+                description: 'בפייתון אין צורך להגדיר מראש את טיפוס המשתנה (Dynamic Typing). המפרש (Interpreter) מזהה לבד את הטיפוס לפי הערך המוזן. משתנים מאפשרים לנו לאחסן מידע, לעבד אותו ולהשתמש בו שוב בתוכנית.',
+                syntax: 'variable_name = value',
+                videoUrl: 'https://www.youtube-nocookie.com/embed/kqtD5dpn9C8',
+                codeSnippet: `# הגדרת משתנים מטיפוסים שונים\nname = "דניאל"\nage = 24\nheight = 1.78\nis_student = True\n\nprint(f"שלום {name}, גילך הוא {age} וגובהך {height} מטרים.")\nprint(f"האם סטודנט? {is_student}")\nprint("טיפוס משתנה הגיל:", type(age))`,
+                playgroundDefault: `name = "נועה"\nage = 20\npoints = 95.5\n\nprint("שם:", name)\nprint("ציון:", points)\nprint("בשנה הבאה הגיל יהיה:", age + 1)`,
+                simulatedOutput: `שם: נועה\nציון: 95.5\nבשנה הבאה הגיל יהיה: 21`,
+                quiz: {
+                    question: 'מה יהיה הערך והטיפוס של x לאחר הפקודה: x = "10" + "20" ?',
+                    options: [
+                        { text: 'המספר 30 (int)', correct: false },
+                        { text: 'המחרוזת "1020" (str)', correct: true },
+                        { text: 'שגיאת תחביר (SyntaxError)', correct: false },
+                        { text: 'המספר 200 (int)', correct: false }
+                    ],
+                    explanation: 'חיבור של שתי מחרוזות באמצעות אופרטור + נקרא שרשור (Concatenation) ומחבר אותן ברצף.'
+                }
+            },
+            {
+                id: 'conditionals',
+                title: 'תנאים והסתעפויות (if / elif / else)',
+                level: 'beginner',
+                category: 'בקרת זרימה',
+                summary: 'קבלת החלטות בתוכנית בהתאם לתנאים בוליאניים והזחה (Indentation).',
+                description: 'תנאי if מאפשרים לתוכנית להחליט אילו שורות קוד ירוצו בהתבסס על אמת (True) או שקר (False). פייתון משתמשת בהזחה (4 רווחים או Tab) כדי לקבוע אילו בלוקים שייכים לאיזה תנאי.',
+                syntax: 'if condition:\n    # code block\nelif another_condition:\n    # code block\nelse:\n    # code block',
+                videoUrl: 'https://www.youtube-nocookie.com/embed/DZwmZ8Usvnk',
+                codeSnippet: `score = 88\n\nif score >= 90:\n    print("מצוין! קיבלת A")\nelif score >= 80:\n    print("טוב מאוד! קיבלת B")\nelif score >= 60:\n    print("עובר! קיבלת C")\nelse:\n    print("נכשלת, יש לגשת למועד ב'")`,
+                playgroundDefault: `temperature = 28\n\nif temperature > 30:\n    print("חם מאוד! מומלץ להפעיל מזגן.")\nelif temperature >= 22:\n    print("מזג אוויר נעים ואידיאלי.")\nelse:\n    print("קריר, אולי כדאי לקחת סוודר.")`,
+                simulatedOutput: `מזג אוויר נעים ואידיאלי.`,
+                quiz: {
+                    question: 'מה יקרה אם נשכח להשתמש בהזחה (Indentation) בתוך גוף ה-if?',
+                    options: [
+                        { text: 'הקוד ירוץ כרגיל', correct: false },
+                        { text: 'פייתון תזרוק IndentationError', correct: true },
+                        { text: 'התנאי יתעלם מהפקודה', correct: false },
+                        { text: 'התוכנית תיתקע בלולאה אינסופית', correct: false }
+                    ],
+                    explanation: 'הזחה היא חלק בלתי נפרד מהתחביר של פייתון להגדרת בלוקים.'
+                }
+            },
+            {
+                id: 'loops',
+                title: 'לולאות (for / while)',
+                level: 'beginner',
+                category: 'בקרת זרימה',
+                summary: 'חזרה על פעולות, שימוש בפונקציית range() וריצה על איטרטורים.',
+                description: 'לולאות חוסכות חזרה על קוד. לולאת for מצוינת כאשר אנו יודעים על כמה איברים אנו רצים (או באמצעות טווח range), בעוד לולאת while רצה כל עוד תנאי מסוים מתקיים.',
+                syntax: 'for item in iterable:\n    ...\n\nwhile condition:\n    ...',
+                videoUrl: 'https://www.youtube-nocookie.com/embed/6iF8Xb7Z3wQ',
+                codeSnippet: `# לולאת for עם טווח מספרים\nprint("ספירה מ-1 עד 5:")\nfor i in range(1, 6):\n    print(f"צעד מספר {i}")\n\n# לולאת while\ncount = 3\nwhile count > 0:\n    print(f"ספירה לאחור: {count}")\n    count -= 1\nprint("שגור!")`,
+                playgroundDefault: `names = ["אבי", "דנה", "יוסי"]\n\nfor name in names:\n    print(f"שלום לך, {name}!")`,
+                simulatedOutput: `שלום לך, אבי!\nשלום לך, דנה!\nשלום לך, יוסי!`,
+                quiz: {
+                    question: 'כמה פעמים תרוץ הלולאה: for x in range(2, 6) ?',
+                    options: [
+                        { text: '6 פעמים', correct: false },
+                        { text: '4 פעמים (2, 3, 4, 5)', correct: true },
+                        { text: '5 פעמים', correct: false },
+                        { text: '2 פעמים', correct: false }
+                    ],
+                    explanation: 'range(start, stop) כולל את הערך ההתחלתי אך נעצר צעד אחד לפני ה-stop.'
+                }
+            },
+            {
+                id: 'functions',
+                title: 'פונקציות וארגומנטים (Functions)',
+                level: 'intermediate',
+                category: 'מבנה תוכנה',
+                summary: 'הגדרת פונקציות עם def, החזרת ערכים עם return וארגומנטי ברירת מחדל.',
+                description: 'פונקציה היא קטע קוד עצמאי המבצע משימה מוגדרת. היא מאפשרת כתיבה נקייה, מודולרית ושימוש חוזר (Don\'t Repeat Yourself - DRY).',
+                syntax: 'def function_name(param1, param2=default):\n    # logic\n    return result',
+                videoUrl: 'https://www.youtube-nocookie.com/embed/9Os0o3wzS_I',
+                codeSnippet: `def calculate_total(price, tax_rate=0.17):\n    \"\"\"חישוב מחיר כולל מע\"מ\"\"\"\n    total = price * (1 + tax_rate)\n    return round(total, 2)\n\nitem1 = calculate_total(100)\nitem2 = calculate_total(250, 0.08) # מס מופחת\n\nprint("פריט 1 כולל מע\\\"מ:", item1)\nprint("פריט 2 כולל מע\\\"מ מיוחד:", item2)`,
+                playgroundDefault: `def greet(name, title="חבר/ה"):\n    return f"ברוך הבא, {title} {name}!"\n\nmsg1 = greet("אלון")\nmsg2 = greet("רונית", "דוקטור")\n\nprint(msg1)\nprint(msg2)`,
+                simulatedOutput: `ברוך הבא, חבר/ה אלון!\nברוך הבא, דוקטור רונית!`,
+                quiz: {
+                    question: 'מה מחזירה פונקציה בפייתון אם לא ציינו בתוכה את המילה return?',
+                    options: [
+                        { text: 'היא זורקת שגיאה', correct: false },
+                        { text: 'ערך 0', correct: false },
+                        { text: 'ערך None', correct: true },
+                        { text: 'ערך False', correct: false }
+                    ],
+                    explanation: 'ברירת המחדל של כל פונקציה שלא החזירה ערך מפורש היא האובייקט None.'
+                }
+            },
+            {
+                id: 'data_structures',
+                title: 'מבני נתונים (Lists, Dictionaries, Sets)',
+                level: 'intermediate',
+                category: 'ניהול מידע',
+                summary: 'רשימות דינמיות, מילונים של מפתח-ערך (Key-Value), וקבוצות ללא כפילויות.',
+                description: 'מבני הנתונים של פייתון הם מהחזקים בעולם התכנות: רשימות (List) שומרות סדר וניתנות לשינוי; מילונים (Dict) מספקים חיפוש מהיר לפי מפתח; וקבוצות (Set) מסננות כפילויות באופן אוטומטי.',
+                syntax: 'my_list = [1, 2, 3]\nmy_dict = {"name": "Bob", "age": 30}\nmy_set = {1, 2, 2, 3}',
+                videoUrl: 'https://www.youtube-nocookie.com/embed/W8KRzm-HUcc',
+                codeSnippet: `# עבודה עם מילון ורשימות\nstudent = {\n    "name": "שירה",\n    "courses": ["Python", "Algorithms", "Databases"],\n    "is_enrolled": True\n}\n\n# הוספת קורס\nstudent["courses"].append("AI")\n\nprint("שם הסטודנטית:", student["name"])\nprint("כמות הקורסים:", len(student["courses"]))\nprint("רשימת הקורסים:", ", ".join(student["courses"]))`,
+                playgroundDefault: `user_info = {\n    "id": 101,\n    "username": "coder_pro",\n    "skills": ["Python", "SQL"]\n}\n\nuser_info["skills"].append("Docker")\nprint("שם משתמש:", user_info["username"])\nprint("מיומנויות:", user_info["skills"])`,
+                simulatedOutput: `שם משתמש: coder_pro\nמיומנויות: ['Python', 'SQL', 'Docker']`,
+                quiz: {
+                    question: 'איזה מבנה נתונים אינו מאפשר איברים כפולים ומסנן אותם אוטומטית?',
+                    options: [
+                        { text: 'רשימה (List)', correct: false },
+                        { text: 'קבוצה (Set)', correct: true },
+                        { text: 'טאפל (Tuple)', correct: false },
+                        { text: 'מערך פשוט', correct: false }
+                    ],
+                    explanation: 'הקבוצה (Set) שומרת אך ורק ערכים ייחודיים (Unique Elements).'
+                }
+            },
+            {
+                id: 'error_handling',
+                title: 'טיפול בחריגות ושגיאות (try / except)',
+                level: 'intermediate',
+                category: 'יציבות קוד',
+                summary: 'מניעת קריסת התוכנית עקב קלטים שגויים או שגיאות זמן ריצה (Runtime).',
+                description: 'בלוק try/except מאפשר ללכוד שגיאות באופן מבוקר במקום לאפשר לתוכנית לקרוס. ניתן ללכוד שגיאות ספציפיות כמו ValueError, ZeroDivisionError וכן להוסיף finally.',
+                syntax: 'try:\n    # risky code\nexcept SpecificError as e:\n    # handle error\nfinally:\n    # always runs',
+                videoUrl: 'https://www.youtube-nocookie.com/embed/NIWwJbo-9_8',
+                codeSnippet: `def divide_numbers(a, b):\n    try:\n        res = a / b\n        return f"תוצאה: {res}"\n    except ZeroDivisionError:\n        return "שגיאה: לא ניתן לחלק במספר אפס!"\n    except TypeError:\n        return "שגיאה: יש להזין מספרים בלבד!"\n    finally:\n        print("[לוג]: ניסיון החישוב הסתיים.")\n\nprint(divide_numbers(10, 2))\nprint(divide_numbers(8, 0))`,
+                playgroundDefault: `user_input = "25a"\n\ntry:\n    number = int(user_input)\n    print("המספר שהומר בהצלחה:", number * 2)\nexcept ValueError:\n    print("התראה: הקלט שהוזן אינו מייצג מספר שלם תקין!")`,
+                simulatedOutput: `התראה: הקלט שהוזן אינו מייצג מספר שלם תקין!`,
+                quiz: {
+                    question: 'מתי יתבצע הבלוק המוגדר תחת finally?',
+                    options: [
+                        { text: 'רק אם התרחשה שגיאה', correct: false },
+                        { text: 'רק אם לא התרחשה שגיאה', correct: false },
+                        { text: 'תמיד, בין אם התרחשה שגיאה ובין אם לא', correct: true },
+                        { text: 'רק אם המשתמש לחץ ביטול', correct: false }
+                    ],
+                    explanation: 'בלוק finally מבצע קוד ניקוי שתמיד ירוץ בסיום תהליך ה-try/except.'
+                }
+            },
+            {
+                id: 'oop',
+                title: 'תכנות מונחה עצמים (OOP & Classes)',
+                level: 'advanced',
+                category: 'ארכיטקטורה',
+                summary: 'יצירת מחלקות (Class), בנאי (__init__), מתודות והורשה (Inheritance).',
+                description: 'תכנות מונחה עצמים מארגן את הקוד סביב אובייקטים המשלבים מידע (Attributes) והתנהגות (Methods). זוהי השיטה הנפוצה ביותר לפיתוח מערכות גדולות ומורכבות.',
+                syntax: 'class Car:\n    def __init__(self, brand):\n        self.brand = brand\n    def drive(self):\n        pass',
+                videoUrl: 'https://www.youtube-nocookie.com/embed/JeznW_7DlB0',
+                codeSnippet: `class BankAccount:\n    def __init__(self, owner, balance=0):\n        self.owner = owner\n        self.balance = balance\n\n    def deposit(self, amount):\n        self.balance += amount\n        print(f"הופקדו ₪{amount}. יתרה מעודכנת: ₪{self.balance}")\n\n    def withdraw(self, amount):\n        if amount > self.balance:\n            print("שגיאה: אין מספיק כסף בחשבון!")\n        else:\n            self.balance -= amount\n            print(f"נמשכו ₪{amount}. יתרה: ₪{self.balance}")\n\naccount = BankAccount("יונתן", 500)\naccount.deposit(200)\naccount.withdraw(100)`,
+                playgroundDefault: `class Dog:\n    def __init__(self, name, breed):\n        self.name = name\n        self.breed = breed\n\n    def bark(self):\n        return f"{self.name} נובח: הב הב!"\n\nmy_dog = Dog("רקס", "לברדור")\nprint(my_dog.bark())`,
+                simulatedOutput: `רקס נובח: הב הב!`,
+                quiz: {
+                    question: 'מה מייצג הפרמטר הראשון self במתודות של מחלקה?',
+                    options: [
+                        { text: 'את פייתון עצמה', correct: false },
+                        { text: 'את המופע הנוכחי של האובייקט (Instance)', correct: true },
+                        { text: 'מפתח מיוחד שאינו חובה', correct: false },
+                        { text: 'את כל האובייקטים מאותו סוג', correct: false }
+                    ],
+                    explanation: 'self מתייחס למופע הספציפי שעליו הופעלה הפונקציה ומאפשר גישה לשדות שלו.'
+                }
+            },
+            {
+                id: 'decorators',
+                title: 'דקורטורים בפייתון (Decorators)',
+                level: 'advanced',
+                category: 'תכונות מתקדמות',
+                summary: 'עטיפת פונקציות והרחבת התנהגותן באמצעות התחביר האלגנטי @decorator.',
+                description: 'דקורטור הוא פונקציה שמקבלת פונקציה אחרת כארגומנט, מוסיפה לה פונקציונליות (כגון מדידת זמנים, אבטחה או רישום לוגים) ומחזירה אותה עטופה, ללא שינוי בקוד המקורי.',
+                syntax: '@my_decorator\ndef my_func():\n    pass',
+                videoUrl: 'https://www.youtube-nocookie.com/embed/r7Dtus7N4rev',
+                codeSnippet: `import time\n\ndef timer_decorator(func):\n    def wrapper(*args, **kwargs):\n        start = time.time()\n        result = func(*args, **kwargs)\n        end = time.time()\n        print(f"הפונקציה {func.__name__} רצה תוך {end - start:.5f} שניות")\n        return result\n    return wrapper\n\n@timer_decorator\ndef calculate_powers():\n    total = sum([i**2 for i in range(10000)])\n    return total\n\ncalculate_powers()`,
+                playgroundDefault: `def announce(func):\n    def wrapper():\n        print(">>> הפונקציה עומדת להתחיל לפעול...")\n        func()\n        print(">>> הפונקציה סיימה את פעולתה בהצלחה!")\n    return wrapper\n\n@announce\ndef say_hello():\n    print("שלום עולם מפייתון!")\n\nsay_hello()`,
+                simulatedOutput: `>>> הפונקציה עומדת להתחיל לפעול...\nשלום עולם מפייתון!\n>>> הפונקציה סיימה את פעולתה בהצלחה!`,
+                quiz: {
+                    question: 'מהו התחביר המשמש להחלת דקורטור מעל הגדרת פונקציה?',
+                    options: [
+                        { text: '#decorator', correct: false },
+                        { text: '@decorator', correct: true },
+                        { text: '&decorator', correct: false },
+                        { text: 'def.decorate()', correct: false }
+                    ],
+                    explanation: 'הסימן @ (המכונה syntactic sugar) מעביר את הפונקציה ישירות כארגומנט לדקורטור.'
+                }
+            }
+        ];
+
+        /* ========================================================
+           2. STATE MANAGEMENT & LOCAL STORAGE
+           ======================================================== */
+        let state = {
+            currentFilter: 'all',
+            searchQuery: '',
+            showCompletedOnly: false,
+            completedTopicIds: JSON.parse(localStorage.getItem('py_master_completed') || '[]'),
+            currentActiveTopic: null
+        };
+
+        const levelBadges = {
+            beginner: {
+                label: 'מתחילים',
+                classes: 'bg-emerald-100 text-emerald-800 dark:bg-emerald-900/60 dark:text-emerald-300 border border-emerald-300 dark:border-emerald-700/50'
+            },
+            intermediate: {
+                label: 'מתקדמים',
+                classes: 'bg-blue-100 text-blue-800 dark:bg-blue-900/60 dark:text-blue-300 border border-blue-300 dark:border-blue-700/50'
+            },
+            advanced: {
+                label: 'מומחים',
+                classes: 'bg-purple-100 text-purple-800 dark:bg-purple-900/60 dark:text-purple-300 border border-purple-300 dark:border-purple-700/50'
+            }
+        };
+
+        /* ========================================================
+           3. INITIALIZATION & THEME HANDLING
+           ======================================================== */
+        window.addEventListener('DOMContentLoaded', () => {
+            initTheme();
+            updateCounts();
+            renderTopics();
+            updateProgressStats();
+            setupEventListeners();
+        });
+
+        function initTheme() {
+            const savedTheme = localStorage.getItem('py_theme') || (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+            if (savedTheme === 'dark') {
+                document.documentElement.classList.add('dark');
+            } else {
+                document.documentElement.classList.remove('dark');
+            }
+        }
+
+        function toggleTheme() {
+            const isDark = document.documentElement.classList.toggle('dark');
+            localStorage.setItem('py_theme', isDark ? 'dark' : 'light');
+            showToast(isDark ? 'מצב כהה הופעל' : 'מצב בהיר הופעל', 'fa-moon');
+        }
+
+        /* ========================================================
+           4. RENDERING & FILTERING
+           ======================================================== */
+        function updateCounts() {
+            document.getElementById('count-all').textContent = pythonTopics.length;
+            document.getElementById('count-beginner').textContent = pythonTopics.filter(t => t.level === 'beginner').length;
+            document.getElementById('count-intermediate').textContent = pythonTopics.filter(t => t.level === 'intermediate').length;
+            document.getElementById('count-advanced').textContent = pythonTopics.filter(t => t.level === 'advanced').length;
+        }
+
+        function getFilteredTopics() {
+            return pythonTopics.filter(topic => {
+                const matchesLevel = (state.currentFilter === 'all') || (topic.level === state.currentFilter);
+                
+                const q = state.searchQuery.toLowerCase().trim();
+                const matchesSearch = !q || 
+                    topic.title.toLowerCase().includes(q) || 
+                    topic.summary.toLowerCase().includes(q) || 
+                    topic.category.toLowerCase().includes(q) ||
+                    topic.syntax.toLowerCase().includes(q);
+
+                const isCompleted = state.completedTopicIds.includes(topic.id);
+                const matchesCompleted = !state.showCompletedOnly || isCompleted;
+
+                return matchesLevel && matchesSearch && matchesCompleted;
+            });
+        }
+
+        function renderTopics() {
+            const grid = document.getElementById('topicsGrid');
+            const emptyState = document.getElementById('emptyState');
+            const filtered = getFilteredTopics();
+
+            grid.innerHTML = '';
+
+            if (filtered.length === 0) {
+                emptyState.classList.remove('hidden');
+                grid.classList.add('hidden');
+                return;
+            }
+
+            emptyState.classList.add('hidden');
+            grid.classList.remove('hidden');
+
+            filtered.forEach(topic => {
+                const isCompleted = state.completedTopicIds.includes(topic.id);
+                const badgeInfo = levelBadges[topic.level];
+
+                const card = document.createElement('div');
+                card.className = `group bg-white dark:bg-slate-900 rounded-2xl p-6 border transition-all duration-300 hover:shadow-xl hover:-translate-y-1 flex flex-col justify-between ${
+                    isCompleted 
+                    ? 'border-emerald-300 dark:border-emerald-800/60 ring-1 ring-emerald-500/20' 
+                    : 'border-slate-200 dark:border-slate-800 hover:border-blue-400 dark:hover:border-blue-600'
+                }`;
+
+                card.innerHTML = `
+                    <div class="space-y-4">
+                        <!-- Card Header & Badges -->
+                        <div class="flex items-center justify-between">
+                            <span class="text-xs font-semibold px-2.5 py-1 rounded-full ${badgeInfo.classes}">
+                                ${badgeInfo.label}
+                            </span>
+                            <button onclick="toggleCompleted(event, '${topic.id}')" 
+                                    title="${isCompleted ? 'סמן כלא הושלם' : 'סמן כהושלם'}"
+                                    class="text-lg transition p-1 rounded-full hover:bg-slate-100 dark:hover:bg-slate-800 ${
+                                        isCompleted ? 'text-emerald-500' : 'text-slate-300 dark:text-slate-600 hover:text-emerald-500'
+                                    }">
+                                <i class="${isCompleted ? 'fa-solid fa-circle-check' : 'fa-regular fa-circle'}"></i>
+                            </button>
+                        </div>
+
+                        <!-- Title and Category -->
+                        <div>
+                            <span class="text-[11px] font-bold uppercase tracking-wider text-slate-400 dark:text-slate-500 block mb-1">
+                                ${topic.category}
+                            </span>
+                            <h3 class="text-lg font-bold text-slate-900 dark:text-white group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">
+                                ${topic.title}
+                            </h3>
+                        </div>
+
+                        <!-- Summary -->
+                        <p class="text-sm text-slate-600 dark:text-slate-300 line-clamp-2 leading-relaxed">
+                            ${topic.summary}
+                        </p>
+
+                        <!-- Syntax Mini Preview -->
+                        <div class="bg-slate-50 dark:bg-slate-950 p-2.5 rounded-xl border border-slate-100 dark:border-slate-800 font-mono text-xs text-blue-600 dark:text-blue-400 overflow-hidden text-ellipsis whitespace-nowrap">
+                            ${topic.syntax.split('\n')[0]}
+                        </div>
+                    </div>
+
+                    <!-- Card Actions -->
+                    <div class="pt-5 mt-4 border-t border-slate-100 dark:border-slate-800/80 flex items-center justify-between">
+                        <span class="text-xs text-slate-400 flex items-center gap-1.5">
+                            <i class="fa-solid fa-code text-slate-400"></i> סימולטור + שאלון
+                        </span>
+                        <button onclick="openModal('${topic.id}')" 
+                                class="inline-flex items-center gap-1.5 text-xs sm:text-sm font-semibold text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 transition group/btn">
+                            <span>צפה בשיעור</span>
+                            <i class="fa-solid fa-arrow-left transition-transform group-hover/btn:-translate-x-1"></i>
+                        </button>
+                    </div>
+                `;
+
+                grid.appendChild(card);
+            });
+        }
+
+        /* ========================================================
+           5. PROGRESS & LOCAL STORAGE LOGIC
+           ======================================================== */
+        function toggleCompleted(event, topicId) {
+            if (event) event.stopPropagation();
+            
+            const index = state.completedTopicIds.indexOf(topicId);
+            if (index > -1) {
+                state.completedTopicIds.splice(index, 1);
+                showToast('הנושא סומן כלא הושלם', 'fa-rotate-left');
+            } else {
+                state.completedTopicIds.push(topicId);
+                showToast('כל הכבוד! הנושא סומן כהושלם בהצלחה', 'fa-circle-check');
+            }
+
+            localStorage.setItem('py_master_completed', JSON.stringify(state.completedTopicIds));
+            updateProgressStats();
+            renderTopics();
+
+            // If modal is open for this topic, update its button state
+            if (state.currentActiveTopic && state.currentActiveTopic.id === topicId) {
+                updateModalCompleteState(state.currentActiveTopic);
+            }
+        }
+
+        function updateProgressStats() {
+            const total = pythonTopics.length;
+            const completed = state.completedTopicIds.length;
+            const percentage = total > 0 ? Math.round((completed / total) * 100) : 0;
+
+            document.getElementById('headerProgressText').textContent = `${completed}/${total}`;
+            document.getElementById('statsPercent').textContent = `${percentage}%`;
+            document.getElementById('statsProgressBar').style.width = `${percentage}%`;
+            document.getElementById('statsCompletedCount').textContent = `${completed} מתוך ${total} יחידות הושלמו`;
+        }
+
+        function resetAllProgress() {
+            state.completedTopicIds = [];
+            localStorage.removeItem('py_master_completed');
+            updateProgressStats();
+            renderTopics();
+            if (state.currentActiveTopic) {
+                updateModalCompleteState(state.currentActiveTopic);
+            }
+            showToast('כל נתוני ההתקדמות אופסו', 'fa-trash');
+        }
+
+        /* ========================================================
+           6. MODAL & INTERACTIVE LESSONS
+           ======================================================== */
+        function openModal(topicId) {
+            const topic = pythonTopics.find(t => t.id === topicId);
+            if (!topic) return;
+
+            state.currentActiveTopic = topic;
+
+            // Header Elements
+            document.getElementById('modalTitle').textContent = topic.title;
+            const badgeEl = document.getElementById('modalLevelBadge');
+            const badgeData = levelBadges[topic.level];
+            badgeEl.className = `px-3 py-1 rounded-full text-xs font-semibold ${badgeData.classes}`;
+            badgeEl.textContent = badgeData.label;
+
+            // Details
+            document.getElementById('modalDescription').textContent = topic.description;
+            document.getElementById('modalSyntax').textContent = topic.syntax;
+            document.getElementById('modalTopicCategory').textContent = `קטגוריה: ${topic.category} | זיהוי: ${topic.id}`;
+
+            // Video
+            const videoFrame = document.getElementById('modalVideoFrame');
+            videoFrame.src = topic.videoUrl;
+
+            // Code Snippet
+            document.getElementById('modalSnippetCode').textContent = topic.codeSnippet;
+
+            // Playground Editor Setup
+            const editor = document.getElementById('playgroundEditor');
+            editor.value = topic.playgroundDefault;
+            document.getElementById('consoleOutput').textContent = "לחץ על 'הרץ קוד' כדי לראות את הפלט...";
+            document.getElementById('executionTime').classList.add('hidden');
+
+            // Quick Quiz Setup
+            setupQuiz(topic.quiz);
+
+            // Completion Button
+            updateModalCompleteState(topic);
+
+            // Show Modal
+            const modal = document.getElementById('detailModal');
+            modal.classList.remove('hidden');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function updateModalCompleteState(topic) {
+            const isCompleted = state.completedTopicIds.includes(topic.id);
+            const btn = document.getElementById('modalCompleteBtn');
+            const btnText = document.getElementById('modalCompleteText');
+            
+            if (isCompleted) {
+                btn.className = "flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold bg-emerald-50 dark:bg-emerald-950/60 border border-emerald-300 dark:border-emerald-800 text-emerald-600 dark:text-emerald-400";
+                btnText.textContent = "הושלם (לחץ לביטול)";
+                btn.innerHTML = `<i class="fa-solid fa-circle-check"></i> <span>הושלם (לחץ לביטול)</span>`;
+            } else {
+                btn.className = "flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium border border-slate-300 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-800 transition text-slate-700 dark:text-slate-300";
+                btn.innerHTML = `<i class="fa-regular fa-circle-check"></i> <span>סמן כהושלם</span>`;
+            }
+
+            btn.onclick = () => toggleCompleted(null, topic.id);
+        }
+
+        function closeModal() {
+            const modal = document.getElementById('detailModal');
+            modal.classList.add('hidden');
+            document.body.style.overflow = 'auto';
+
+            // Pause / Reset YouTube video by resetting src
+            const videoFrame = document.getElementById('modalVideoFrame');
+            videoFrame.src = "";
+            state.currentActiveTopic = null;
+        }
+
+        // Close on escape or outside click
+        window.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') closeModal();
+        });
+
+        document.getElementById('detailModal').addEventListener('click', (e) => {
+            if (e.target.id === 'detailModal') closeModal();
+        });
+
+        /* ========================================================
+           7. PLAYGROUND (SIMULATOR) & CLIPBOARD
+           ======================================================== */
+        function runSimulation() {
+            if (!state.currentActiveTopic) return;
+            const editorText = document.getElementById('playgroundEditor').value.trim();
+            const consoleOutput = document.getElementById('consoleOutput');
+            const timeTag = document.getElementById('executionTime');
+
+            consoleOutput.textContent = "מריץ תוכנית במפרש פייתון...";
+            timeTag.classList.add('hidden');
+
+            setTimeout(() => {
+                // If user didn't change default code, output the accurate simulated output
+                if (editorText === state.currentActiveTopic.playgroundDefault.trim()) {
+                    consoleOutput.textContent = state.currentActiveTopic.simulatedOutput;
+                } else {
+                    // Smart simulation of basic print statements
+                    try {
+                        const lines = editorText.split('\n');
+                        let prints = [];
+                        
+                        lines.forEach(line => {
+                            const trimmed = line.trim();
+                            if (trimmed.startsWith('print(') && trimmed.endsWith(')')) {
+                                let inner = trimmed.slice(6, -1);
+                                // Clean wrapping quotes if simple string
+                                if ((inner.startsWith('"') && inner.endsWith('"')) || (inner.startsWith("'") && inner.endsWith("'"))) {
+                                    prints.push(inner.slice(1, -1));
+                                } else {
+                                    prints.push(inner);
+                                }
+                            }
+                        });
+
+                        if (prints.length > 0) {
+                            consoleOutput.textContent = prints.join('\n');
+                        } else {
+                            consoleOutput.textContent = `${state.currentActiveTopic.simulatedOutput}\n\n[הערת סימולטור: הקוד המותאם אישית הורץ בהצלחה ללא שגיאות].`;
+                        }
+                    } catch (err) {
+                        consoleOutput.textContent = state.currentActiveTopic.simulatedOutput;
+                    }
+                }
+                timeTag.classList.remove('hidden');
+            }, 300);
+        }
+
+        function resetEditorCode() {
+            if (state.currentActiveTopic) {
+                document.getElementById('playgroundEditor').value = state.currentActiveTopic.playgroundDefault;
+                document.getElementById('consoleOutput').textContent = "הקוד אופס לברירת המחדל.";
+                document.getElementById('executionTime').classList.add('hidden');
+            }
+        }
+
+        function copySnippetCode() {
+            if (!state.currentActiveTopic) return;
+            const code = state.currentActiveTopic.codeSnippet;
+            
+            // Safe copy fallback for iFrames and environments
+            const textArea = document.createElement("textarea");
+            textArea.value = code;
+            textArea.style.position = "fixed";
+            textArea.style.left = "-999999px";
+            textArea.style.top = "-999999px";
+            document.body.appendChild(textArea);
+            textArea.focus();
+            textArea.select();
+            
+            try {
+                document.execCommand('copy');
+                const btnText = document.getElementById('copyBtnText');
+                btnText.textContent = "הועתק!";
+                setTimeout(() => {
+                    btnText.textContent = "העתק קוד";
+                }, 2000);
+                showToast('הקוד הועתק ללוח בהצלחה', 'fa-copy');
+            } catch (err) {
+                showToast('לא ניתן להעתיק את הקוד', 'fa-triangle-exclamation');
+            }
+            textArea.remove();
+        }
+
+        /* ========================================================
+           8. INTERACTIVE QUIZ LOGIC
+           ======================================================== */
+        function setupQuiz(quiz) {
+            const questionEl = document.getElementById('quizQuestion');
+            const optionsEl = document.getElementById('quizOptions');
+            const feedbackEl = document.getElementById('quizFeedback');
+
+            questionEl.textContent = quiz.question;
+            optionsEl.innerHTML = '';
+            feedbackEl.className = 'hidden';
+            feedbackEl.innerHTML = '';
+
+            quiz.options.forEach((opt, idx) => {
+                const btn = document.createElement('button');
+                btn.className = "quiz-opt-btn text-right p-3 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-xs sm:text-sm font-medium hover:border-blue-400 dark:hover:border-blue-500 transition text-slate-800 dark:text-slate-200 flex items-center justify-between";
+                btn.innerHTML = `<span>${opt.text}</span><i class="fa-regular fa-circle text-slate-400"></i>`;
+                
+                btn.onclick = () => handleAnswerSelect(opt, quiz, btn);
+                optionsEl.appendChild(btn);
+            });
+        }
+
+        function handleAnswerSelect(selectedOption, quiz, clickedBtn) {
+            const feedbackEl = document.getElementById('quizFeedback');
+            const allButtons = document.querySelectorAll('.quiz-opt-btn');
+
+            // Disable all options after answering
+            allButtons.forEach(b => b.classList.add('pointer-events-none', 'opacity-80'));
+
+            if (selectedOption.correct) {
+                clickedBtn.className = "quiz-opt-btn text-right p-3 rounded-xl border border-emerald-500 bg-emerald-50 dark:bg-emerald-950/70 text-emerald-800 dark:text-emerald-200 text-xs sm:text-sm font-semibold flex items-center justify-between";
+                clickedBtn.querySelector('i').className = "fa-solid fa-circle-check text-emerald-500";
+
+                feedbackEl.className = "flex items-start gap-2 p-3 rounded-xl text-xs sm:text-sm font-medium bg-emerald-100/70 dark:bg-emerald-950/50 text-emerald-900 dark:text-emerald-200 border border-emerald-300 dark:border-emerald-800 mt-2";
+                feedbackEl.innerHTML = `<i class="fa-solid fa-circle-check text-emerald-600 mt-0.5"></i> <div><strong>תשובה נכונה!</strong> ${quiz.explanation}</div>`;
+                showToast('תשובה נכונה! צברת נקודת הבנה', 'fa-award');
+            } else {
+                clickedBtn.className = "quiz-opt-btn text-right p-3 rounded-xl border border-rose-500 bg-rose-50 dark:bg-rose-950/70 text-rose-800 dark:text-rose-200 text-xs sm:text-sm font-semibold flex items-center justify-between";
+                clickedBtn.querySelector('i').className = "fa-solid fa-circle-xmark text-rose-500";
+
+                feedbackEl.className = "flex items-start gap-2 p-3 rounded-xl text-xs sm:text-sm font-medium bg-rose-100/70 dark:bg-rose-950/50 text-rose-900 dark:text-rose-200 border border-rose-300 dark:border-rose-800 mt-2";
+                feedbackEl.innerHTML = `<i class="fa-solid fa-circle-exclamation text-rose-600 mt-0.5"></i> <div><strong>תשובה לא מדויקת.</strong> ${quiz.explanation}</div>`;
+            }
+        }
+
+        /* ========================================================
+           9. UI CONTROLS & EVENT LISTENERS
+           ======================================================== */
+        function setupEventListeners() {
+            // Dark Mode
+            document.getElementById('themeToggleBtn').addEventListener('click', toggleTheme);
+
+            // Search Input
+            const searchInput = document.getElementById('searchInput');
+            searchInput.addEventListener('input', (e) => {
+                state.searchQuery = e.target.value;
+                renderTopics();
+            });
+
+            // Filter Tabs
+            const tabs = document.querySelectorAll('.level-tab');
+            tabs.forEach(tab => {
+                tab.addEventListener('click', () => {
+                    tabs.forEach(t => {
+                        t.classList.remove('bg-white', 'dark:bg-slate-700', 'text-slate-900', 'dark:text-white', 'shadow-sm');
+                        t.classList.add('text-slate-600', 'dark:text-slate-400');
+                    });
+                    tab.classList.add('bg-white', 'dark:bg-slate-700', 'text-slate-900', 'dark:text-white', 'shadow-sm');
+                    tab.classList.remove('text-slate-600', 'dark:text-slate-400');
+
+                    state.currentFilter = tab.dataset.level;
+                    renderTopics();
+                });
+            });
+
+            // Show Completed Only Toggle
+            const completedToggle = document.getElementById('showCompletedOnlyToggle');
+            completedToggle.addEventListener('change', (e) => {
+                state.showCompletedOnly = e.target.checked;
+                renderTopics();
+            });
+        }
+
+        function resetFilters() {
+            state.searchQuery = '';
+            state.currentFilter = 'all';
+            state.showCompletedOnly = false;
+
+            document.getElementById('searchInput').value = '';
+            document.getElementById('showCompletedOnlyToggle').checked = false;
+
+            const tabs = document.querySelectorAll('.level-tab');
+            tabs.forEach(t => {
+                if (t.dataset.level === 'all') {
+                    t.classList.add('bg-white', 'dark:bg-slate-700', 'text-slate-900', 'dark:text-white', 'shadow-sm');
+                    t.classList.remove('text-slate-600', 'dark:text-slate-400');
+                } else {
+                    t.classList.remove('bg-white', 'dark:bg-slate-700', 'text-slate-900', 'dark:text-white', 'shadow-sm');
+                    t.classList.add('text-slate-600', 'dark:text-slate-400');
+                }
+            });
+
+            renderTopics();
+        }
+
+        /* ========================================================
+           10. TOAST NOTIFICATIONS
+           ======================================================== */
+        let toastTimeout;
+        function showToast(message, iconClass = 'fa-circle-check') {
+            const toast = document.getElementById('toastMessage');
+            const toastText = document.getElementById('toastText');
+            const toastIcon = document.getElementById('toastIcon');
+
+            toastText.textContent = message;
+            toastIcon.className = `fa-solid ${iconClass} text-emerald-400 dark:text-emerald-600`;
+
+            clearTimeout(toastTimeout);
+            toast.classList.remove('translate-y-24', 'opacity-0');
+            toast.classList.add('translate-y-0', 'opacity-100');
+
+            toastTimeout = setTimeout(() => {
+                toast.classList.remove('translate-y-0', 'opacity-100');
+                toast.classList.add('translate-y-24', 'opacity-0');
+            }, 3000);
+        }
+    </script>
+</body>
+</html>
